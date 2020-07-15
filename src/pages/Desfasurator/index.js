@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { List, Card, Chart, Tabs } from "@syneto/compass-react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const Desfasurator = () => {
+  let { id } = useParams();
   const holidays = [
     { id: "1", interval: "13 Mai - 15 Mai", days: "3 zile" },
     { id: "2", interval: "12 Iunie - 17 Iunie", days: "6 zile" },
   ];
-  const employee = {
-    id: "1",
-    firstName: "John",
-    lastName: "Doe",
-    totalZileCo: 24,
-    rest2019: 0,
-    zileCraciun: 5,
-    zileLuate: 3,
-    zileRamase: 21,
-  };
+
   const [activeKey, setActiveKey] = useState("summary");
+  const [employee, setEmployee] = useState([]);
+
+  useEffect(() => {
+    fetchEmployee();
+  }, []);
+  const fetchEmployee = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/employees/${id}`);
+      setEmployee(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Tabs activeKey={activeKey} onSelect={(tab) => setActiveKey(tab)}>
@@ -49,12 +56,15 @@ const Desfasurator = () => {
               items={[
                 {
                   label: "Total Zile Cf Contract",
-                  value: employee.totalZileCo,
+                  value: employee.total_vacantion_days,
                 },
-                { label: "Restanta 2019", value: employee.rest2019 },
-                { label: "Zile Craciun", value: employee.zileCraciun },
-                { label: "Zile Luate", value: employee.zileLuate },
-                { label: "Zile Ramase", value: employee.zileRamase },
+                { label: "Restanta 2019", value: employee.leftovers_2019 },
+                { label: "Zile Craciun", value: employee.christmas_days },
+                { label: "Zile Luate", value: employee.vacantion_days_taken },
+                {
+                  label: "Zile Ramase",
+                  value: employee.available_vacation_days,
+                },
               ]}
             />
           </div>
@@ -64,15 +74,15 @@ const Desfasurator = () => {
               data={[
                 {
                   color: "#1bba80",
-                  value: employee.zileRamase,
+                  value: employee.leftovers_2019,
                 },
                 {
                   color: "#E1E8F1",
-                  value: employee.totalZileCo,
+                  value: employee.total_vacantion_days,
                 },
                 {
                   color: "#e76974",
-                  value: employee.zileLuate,
+                  value: employee.vacantion_days_taken,
                 },
               ]}
               multipleLabels={true}

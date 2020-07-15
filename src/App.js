@@ -38,7 +38,7 @@ function App() {
           }
         />
       </Route>
-      <Route path="/desfasurator">
+      <Route path="/desfasurator/:id">
         <Layout
           hasDrawer={false}
           header={
